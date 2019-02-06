@@ -26,7 +26,9 @@ void setup(){
     background(0);
     shuffle();
 
-    algo = new BubbleSort();
+    frameRate(1);
+
+    algo = new ShortBubbleSort();
 
     cp5 = new ControlP5(this);
     
@@ -49,6 +51,7 @@ void setup(){
 void keyPressed(){
 
     algo.reset();
+    startTime = millis();
     shuffle();
     redraw();
     loop();

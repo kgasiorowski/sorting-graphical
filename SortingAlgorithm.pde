@@ -18,6 +18,7 @@ abstract class SortingAlgorithm{
 
     void reset(){
     
+        sorted = false;
         numComps = numSwaps = 0;
     
     }
