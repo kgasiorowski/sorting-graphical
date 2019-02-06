@@ -4,16 +4,22 @@ abstract class SortingAlgorithm{
     int numComps = 0;
     int numSwaps = 0;
     
-    abstract void step(int[] arr);
+    abstract void step();
     
     void swap(int swap1, int swap2){
     
-        int temp = arr[swap1];
-        arr[swap1] = arr[swap2];
-        arr[swap2] = temp;
-    
+        // No additional memory required for swap
+        
+        if(swap1 == swap2){
+            return;
+        }
+        
+        arr[swap2] = arr[swap1] + arr[swap2];
+        arr[swap1] = arr[swap2] - arr[swap1];
+        arr[swap2] = arr[swap2] - arr[swap1];
+
         numSwaps++;
-    
+
     }
 
     void reset(){

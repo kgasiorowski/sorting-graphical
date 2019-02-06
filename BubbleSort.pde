@@ -9,7 +9,7 @@ class BubbleSort extends SortingAlgorithm{
     
     }
     
-    void step(int[] arr){
+    void step(){
     
         if(sorted)
             return;

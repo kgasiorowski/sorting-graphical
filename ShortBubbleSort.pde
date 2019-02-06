@@ -1,14 +1,8 @@
-class ShortBubbleSort extends SortingAlgorithm{
+class FastBubbleSort extends SortingAlgorithm{
 
-    int j;
+    int j = 0;
     
-    ShortBubbleSort(){
-    
-        j = 0;
-    
-    }
-    
-    void step(int[] arr){
+    void step(){
     
         if(sorted)
             return;

@@ -1,7 +1,7 @@
 import controlP5.*;
 
 int arr[];
-int numVals = 300;
+int numVals = 150;
 float rect_pixel_width;
 float startTime;
 SortingAlgorithm algo;
@@ -13,7 +13,7 @@ Textlabel timeLabel;
 
 void setup(){
 
-    size(500,300);
+    size(700, 500);
     
     arr = new int[numVals];
     
@@ -26,28 +26,44 @@ void setup(){
     background(0);
     shuffle();
 
-    algo = new ShortBubbleSort();
+    algo = new SelectionSort();
 
     cp5 = new ControlP5(this);
     
     swapsLabel = cp5.addTextlabel("label")
         .setPosition(10, 10)
-        .setColorValue(color(255));
+        .setColorValue(color(255))
+        .setFont(createFont("",20));
 
     compsLabel = cp5.addTextlabel("label2")
-        .setPosition(10, 20)
-        .setColorValue(color(255));
+        .setPosition(10, 30)
+        .setColorValue(color(255))
+        .setFont(createFont("",20));
 
     timeLabel = cp5.addTextlabel("label3")
-        .setPosition(10, 30)
-        .setColorValue(color(255));
+        .setPosition(10, 50)
+        .setColorValue(color(255))
+        .setFont(createFont("",20));
 
     startTime = millis();
+
+    frameRate(60);
 
 }
 
 void keyPressed(){
 
+    if(keyCode == 32)
+        reset();   
+    
+
+}
+
+void reset(){
+
+    noLoop();
+    int i = 1;
+    while((arr[i-1] = i++) < arr.length);
     algo.reset();
     startTime = millis();
     timeLabel.setColorValue(color(255));
@@ -61,13 +77,20 @@ void draw(){
     
     background(0);
     
-    algo.step(arr);
-    
+    algo.step();
     
     for(int i = 0; i < arr.length; i++){
     
-        noStroke();
-        fill(mapColor(arr[i]));
+        color clr = mapColor(arr[i]);
+        
+        if(i == ((SelectionSort)(algo)).i || i == ((SelectionSort)(algo)).j)
+            stroke(255);
+        else if(i == ((SelectionSort)(algo)).biggest)
+            stroke(255, 0, 255);
+        else
+            stroke(clr);
+            
+        fill(clr);
         rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
     
     }
@@ -79,15 +102,21 @@ void draw(){
     
     }
     
+    float timeSeconds = round((millis() - startTime)/100.0)/10.0;
+    int timeMinutes = ((int)timeSeconds / 60);
+    int timeHours = timeMinutes / 60;
+    
+    String timeString = String.format("%d:%d:%.1f", timeHours, timeMinutes%60, timeSeconds%60);
+    
     swapsLabel.setText("Swaps: " + algo.numSwaps);
     compsLabel.setText("Comps: " + algo.numComps);
-    timeLabel.setText("Time elapsed: " + round((millis() - startTime)/100.0)/10.0);
+    timeLabel.setText("Time elapsed: " + timeString);
     
 }
 
 void shuffle(){
 
-    for(int i = 0; i < 1000; i++){
+    for(int i = 0; i < arr.length; i++){
     
         int swap1, swap2;
         swap1 = swap2 = 0;
