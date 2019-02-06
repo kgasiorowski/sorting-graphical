@@ -1,75 +1,69 @@
 import controlP5.*;
 
 int arr[];
+int numVals = 50;
 float rect_pixel_width;
-    
+float startTime;
+SortingAlgorithm algo;
 
+ControlP5 cp5;
+Textlabel swapsLabel;
+Textlabel compsLabel;
+Textlabel timeLabel;
 
 void setup(){
 
     size(500,300);
     
-    arr = new int[100];
+    arr = new int[numVals];
     
     int i = 1;
     while((arr[i-1] = i++) < arr.length);
 
     println(width, height);
-
     rect_pixel_width = (float)width/(float)(arr.length);
-
     rectMode(CORNER);
-
-    frameRate(60);
-
     background(0);
-
     shuffle();
+
+    algo = new BubbleSort();
+
+    cp5 = new ControlP5(this);
+    
+    swapsLabel = cp5.addTextlabel("label")
+        .setPosition(10, 10)
+        .setColorValue(color(255));
+
+    compsLabel = cp5.addTextlabel("label2")
+        .setPosition(10, 20)
+        .setColorValue(color(255));
+
+    timeLabel = cp5.addTextlabel("label3")
+        .setPosition(10, 30)
+        .setColorValue(color(255));
+
+    startTime = millis();
 
 }
 
 void keyPressed(){
 
+    algo.reset();
     shuffle();
-    i = 0;
-    j = 0;
     redraw();
     loop();
 
 }
 
-int i = 0, j = 0;
-
 void draw(){
     
     background(0);
     
-    //for(int j = 0; j < arr.length-1; j++){
+    algo.step(arr);
     
-    //    for(int i = 0; i < arr.length-1-j; i++){
-        
-    //        if(arr[i] > arr[i+1]){
-            
-    //            swap(i, i+1);
-            
-    //        }
-        
-    //    }
-    
-    //}
-    
-    if(arr[i] > arr[i+1])
-        swap(i, i+1);
-    
-    i++;
-    
-    if(i >= arr.length-1-j)
-    {
-    
-        i = 0;
-        j++;
-    
-    }
+    swapsLabel.setText("Swaps: " + algo.numSwaps);
+    compsLabel.setText("Comps: " + algo.numComps);
+    timeLabel.setText("Time elapsed: " + round((millis() - startTime)/100.0)/10.0);
     
     for(int i = 0; i < arr.length; i++){
     
@@ -79,21 +73,13 @@ void draw(){
     
     }
 
-    if(j >= arr.length-1){
+    if(algo.sorted){
     
         println("Done!");    
         noLoop();
     
     }
     
-}
-
-void swap(int swap1, int swap2){
-
-    int temp = arr[swap1];
-    arr[swap1] = arr[swap2];
-    arr[swap2] = temp;
-
 }
 
 void shuffle(){
@@ -110,7 +96,9 @@ void shuffle(){
         
         }while(swap1 == swap2);
         
-        swap(swap1, swap2);
+        int temp = arr[swap1];
+        arr[swap1] = arr[swap2];
+        arr[swap2] = temp;
         
     }
 
