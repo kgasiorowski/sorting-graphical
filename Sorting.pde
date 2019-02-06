@@ -1,7 +1,7 @@
 import controlP5.*;
 
 int arr[];
-int numVals = 50;
+int numVals = 300;
 float rect_pixel_width;
 float startTime;
 SortingAlgorithm algo;
@@ -25,8 +25,6 @@ void setup(){
     rectMode(CORNER);
     background(0);
     shuffle();
-
-    frameRate(1);
 
     algo = new ShortBubbleSort();
 
@@ -52,6 +50,7 @@ void keyPressed(){
 
     algo.reset();
     startTime = millis();
+    timeLabel.setColorValue(color(255));
     shuffle();
     redraw();
     loop();
@@ -64,9 +63,6 @@ void draw(){
     
     algo.step(arr);
     
-    swapsLabel.setText("Swaps: " + algo.numSwaps);
-    compsLabel.setText("Comps: " + algo.numComps);
-    timeLabel.setText("Time elapsed: " + round((millis() - startTime)/100.0)/10.0);
     
     for(int i = 0; i < arr.length; i++){
     
@@ -78,10 +74,14 @@ void draw(){
 
     if(algo.sorted){
     
-        println("Done!");    
+        timeLabel.setColorValue(color(0,255,0));
         noLoop();
     
     }
+    
+    swapsLabel.setText("Swaps: " + algo.numSwaps);
+    compsLabel.setText("Comps: " + algo.numComps);
+    timeLabel.setText("Time elapsed: " + round((millis() - startTime)/100.0)/10.0);
     
 }
 
