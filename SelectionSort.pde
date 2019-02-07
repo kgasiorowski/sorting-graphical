@@ -1,6 +1,15 @@
 class SelectionSort extends SortingAlgorithm{
 
-    int i = 0, j = arr.length-1, biggest = j;
+    int biggest;
+    
+    SelectionSort(){
+        
+        i = 0; 
+        j = arr.length-1; 
+        biggest = j;
+        name = "Selection Sort";
+    
+    }
     
     void step(){
     

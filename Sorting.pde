@@ -1,19 +1,21 @@
 import controlP5.*;
 
 int arr[];
-int numVals = 150;
+int numVals = 500;
 float rect_pixel_width;
 float startTime;
-SortingAlgorithm algo;
+SortingAlgorithm[] algos;
+int currentAlgorithm = 0;
 
 ControlP5 cp5;
 Textlabel swapsLabel;
 Textlabel compsLabel;
 Textlabel timeLabel;
+Textlabel nameLabel;
 
 void setup(){
 
-    size(700, 500);
+    size(900, 700);
     
     arr = new int[numVals];
     
@@ -26,48 +28,77 @@ void setup(){
     background(0);
     shuffle();
 
-    algo = new SelectionSort();
+    algos = new SortingAlgorithm[4];
+
+    algos[0] = new BubbleSort();
+    algos[1] = new FastBubbleSort();
+    algos[2] = new SelectionSort();
+    algos[3] = new FastSelectionSort();
 
     cp5 = new ControlP5(this);
     
-    swapsLabel = cp5.addTextlabel("label")
+    nameLabel = cp5.addTextlabel("meh lol")
         .setPosition(10, 10)
         .setColorValue(color(255))
-        .setFont(createFont("",20));
-
-    compsLabel = cp5.addTextlabel("label2")
+        .setFont(createFont("",20))
+        .setText(algos[currentAlgorithm].name);
+        
+    swapsLabel = cp5.addTextlabel("label")
         .setPosition(10, 30)
         .setColorValue(color(255))
         .setFont(createFont("",20));
 
-    timeLabel = cp5.addTextlabel("label3")
+    compsLabel = cp5.addTextlabel("label2")
         .setPosition(10, 50)
+        .setColorValue(color(255))
+        .setFont(createFont("",20));
+
+    timeLabel = cp5.addTextlabel("label3")
+        .setPosition(10, 70)
         .setColorValue(color(255))
         .setFont(createFont("",20));
 
     startTime = millis();
 
-    frameRate(60);
-
 }
 
 void keyPressed(){
-
+    
     if(keyCode == 32)
         reset();   
+    else if(keyCode == 38){
+    
+        currentAlgorithm = (currentAlgorithm + 1) % algos.length;
+        reset();
+    
+    }else if(keyCode == 40){
+    
+        currentAlgorithm = currentAlgorithm - 1 < 0 ? algos.length-1 : currentAlgorithm - 1;
+        reset();
+    
+    }
     
 
 }
 
 void reset(){
 
+    // Stop the program from looping
     noLoop();
+    // Re-fill the array
     int i = 1;
     while((arr[i-1] = i++) < arr.length);
-    algo.reset();
+    // Let the algorithm reset
+    algos[currentAlgorithm].reset();
+    // Record the new starting time
     startTime = millis();
+    // Reset the time label's color
     timeLabel.setColorValue(color(255));
+    nameLabel.setText(algos[currentAlgorithm].name);
+    // Shuffle the array
     shuffle();
+    
+    // Now re-start everything
     redraw();
     loop();
 
@@ -77,18 +108,52 @@ void draw(){
     
     background(0);
     
+    SortingAlgorithm algo = algos[currentAlgorithm];
+    
     algo.step();
     
     for(int i = 0; i < arr.length; i++){
     
         color clr = mapColor(arr[i]);
         
-        if(i == ((SelectionSort)(algo)).i || i == ((SelectionSort)(algo)).j)
-            stroke(255);
-        else if(i == ((SelectionSort)(algo)).biggest)
-            stroke(255, 0, 255);
-        else
+        stroke(clr);
+        
+        if(algo instanceof BubbleSort){
+        
+            if(i == algo.i || i == arr.length - algo.j - 1){
+            
+                stroke(255);
+            
+            }else{
+            
+                stroke(clr);
+            
+            }
+        
+        }else if(algo instanceof SelectionSort){
+        
+            if(i == algo.i || i == algo.j+1 || i == ((SelectionSort)(algo)).biggest){
+            
+                stroke(255);
+            
+            }else{
+            
+                stroke(clr);
+            
+            }
+        
+        }else if(algo instanceof FastBubbleSort){
+        
             stroke(clr);
+        
+        }
+        
+        //if(i == algo.i || i == algo.j)
+        //    stroke(255);
+        //else if(algo instanceof SelectionSort && i == ((SelectionSort)(algo)).biggest)
+        //    stroke(255, 0, 255);
+        //else
+        //    stroke(clr);
             
         fill(clr);
         rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
@@ -118,19 +183,13 @@ void shuffle(){
 
     for(int i = 0; i < arr.length; i++){
     
-        int swap1, swap2;
-        swap1 = swap2 = 0;
+        int swap = 0;
         
-        do{
-            
-            swap1 = int(random(arr.length));
-            swap2 = int(random(arr.length));
+        swap = int(random(arr.length));
         
-        }while(swap1 == swap2);
-        
-        int temp = arr[swap1];
-        arr[swap1] = arr[swap2];
-        arr[swap2] = temp;
+        int temp = arr[i];
+        arr[i] = arr[swap];
+        arr[swap] = temp;
         
     }
 

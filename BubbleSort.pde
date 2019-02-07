@@ -1,11 +1,10 @@
 class BubbleSort extends SortingAlgorithm{
-
-    int i, j;
     
     BubbleSort(){
     
         i = 0;
         j = 0;
+        name = "Bubble Sort";
     
     }
     

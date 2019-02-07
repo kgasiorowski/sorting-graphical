@@ -1,8 +1,10 @@
 abstract class SortingAlgorithm{
     
+    String name;
     boolean sorted = false;
     int numComps = 0;
     int numSwaps = 0;
+    int i, j;
     
     abstract void step();
     

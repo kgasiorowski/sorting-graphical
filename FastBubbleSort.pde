@@ -1,6 +1,11 @@
 class FastBubbleSort extends SortingAlgorithm{
 
-    int j = 0;
+    FastBubbleSort(){
+    
+        j = 0;
+        name = "Fast Bubble Sort";
+    
+    }
     
     void step(){
     
