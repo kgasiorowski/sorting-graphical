@@ -7,6 +7,8 @@ float startTime;
 SortingAlgorithm[] algos;
 int currentAlgorithm = 0;
 
+float fontSize = 14;
+
 ControlP5 cp5;
 Textlabel swapsLabel;
 Textlabel compsLabel;
@@ -28,37 +30,53 @@ void setup(){
     background(0);
     shuffle();
 
-    algos = new SortingAlgorithm[4];
+    frameRate(60);
+
+    algos = new SortingAlgorithm[6];
 
     algos[0] = new BubbleSort();
     algos[1] = new FastBubbleSort();
     algos[2] = new SelectionSort();
     algos[3] = new FastSelectionSort();
+    algos[4] = new InsertionSort();
+    algos[5] = new FastInsertionSort();
 
     cp5 = new ControlP5(this);
     
     nameLabel = cp5.addTextlabel("meh lol")
         .setPosition(10, 10)
         .setColorValue(color(255))
-        .setFont(createFont("",20))
+        .setFont(createFont("",fontSize))
         .setText(algos[currentAlgorithm].name);
         
     swapsLabel = cp5.addTextlabel("label")
         .setPosition(10, 30)
         .setColorValue(color(255))
-        .setFont(createFont("",20));
+        .setFont(createFont("",fontSize));
 
     compsLabel = cp5.addTextlabel("label2")
         .setPosition(10, 50)
         .setColorValue(color(255))
-        .setFont(createFont("",20));
+        .setFont(createFont("",fontSize));
 
     timeLabel = cp5.addTextlabel("label3")
         .setPosition(10, 70)
         .setColorValue(color(255))
-        .setFont(createFont("",20));
+        .setFont(createFont("",fontSize));
 
     startTime = millis();
+
+}
+
+boolean looping = true;
+void mousePressed(){
+
+    if(looping)
+        noLoop();
+    else
+        loop();
+        
+    looping = !looping;
 
 }
 
@@ -116,7 +134,7 @@ void draw(){
     
         color clr = mapColor(arr[i]);
         
-        stroke(clr);
+        
         
         if(algo instanceof BubbleSort){
         
@@ -142,18 +160,11 @@ void draw(){
             
             }
         
-        }else if(algo instanceof FastBubbleSort){
+        }else{
         
             stroke(clr);
         
         }
-        
-        //if(i == algo.i || i == algo.j)
-        //    stroke(255);
-        //else if(algo instanceof SelectionSort && i == ((SelectionSort)(algo)).biggest)
-        //    stroke(255, 0, 255);
-        //else
-        //    stroke(clr);
             
         fill(clr);
         rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
