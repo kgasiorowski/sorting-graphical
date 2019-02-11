@@ -4,6 +4,7 @@ int arr[];
 int numVals = 500;
 float rect_pixel_width;
 float startTime;
+float pauseTime;
 SortingAlgorithm[] algos;
 int currentAlgorithm = 0;
 
@@ -65,16 +66,27 @@ void setup(){
         .setFont(createFont("",fontSize));
 
     startTime = millis();
+    pauseTime = 0;
 
 }
 
 boolean looping = true;
 void mousePressed(){
 
-    if(looping)
+    if(algos[currentAlgorithm].sorted)
+        return;
+    
+    if(looping){
+    
+        pauseTime -= millis();
         noLoop();
-    else
+    
+    }else{
+    
+        pauseTime += millis();
         loop();
+        
+    }
         
     looping = !looping;
 
@@ -178,7 +190,7 @@ void draw(){
     
     }
     
-    float timeSeconds = round((millis() - startTime)/100.0)/10.0;
+    float timeSeconds = round((millis() - startTime - pauseTime)/100.0)/10.0;
     int timeMinutes = ((int)timeSeconds / 60);
     int timeHours = timeMinutes / 60;
     
