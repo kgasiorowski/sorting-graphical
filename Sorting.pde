@@ -1,12 +1,12 @@
 import controlP5.*;
 
 int arr[];
-int numVals = 500;
+int numVals = 20;
 float rect_pixel_width;
 float startTime;
 float pauseTime;
 SortingAlgorithm[] algos;
-int currentAlgorithm = 0;
+int currentAlgorithm = 6;
 
 float fontSize = 14;
 
@@ -17,7 +17,7 @@ Textlabel timeLabel;
 Textlabel nameLabel;
 
 void setup(){
-
+    
     size(900, 700);
     
     arr = new int[numVals];
@@ -33,7 +33,7 @@ void setup(){
 
     frameRate(60);
 
-    algos = new SortingAlgorithm[6];
+    algos = new SortingAlgorithm[7];
 
     algos[0] = new BubbleSort();
     algos[1] = new FastBubbleSort();
@@ -41,6 +41,7 @@ void setup(){
     algos[3] = new FastSelectionSort();
     algos[4] = new InsertionSort();
     algos[5] = new FastInsertionSort();
+    algos[6] = new QuickSort();
 
     cp5 = new ControlP5(this);
     
@@ -107,7 +108,6 @@ void keyPressed(){
         reset();
     
     }
-    
 
 }
 
@@ -146,7 +146,7 @@ void draw(){
     
         color clr = mapColor(arr[i]);
         
-        
+        stroke(clr);
         
         if(algo instanceof BubbleSort){
         
@@ -172,9 +172,20 @@ void draw(){
             
             }
         
-        }else{
+        }else if(algo instanceof QuickSort){
         
-            stroke(clr);
+            QuickSort q = (QuickSort)algo;
+            
+            if(i == q.low || i == q.high){
+            
+                stroke(255);
+                
+            }else if(i == q.pivot){
+            
+                stroke(255, 0, 255);
+            
+            }
+            
         
         }
             
