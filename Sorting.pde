@@ -1,12 +1,12 @@
 import controlP5.*;
 
-int arr[] = {5,4,1,7,9,10,6,8,2,3};
-int numVals = 300;
+int arr[];
+int numVals = 250;
 float rect_pixel_width;
 float startTime;
 float pauseTime;
 SortingAlgorithm[] algos;
-int currentAlgorithm = 6;
+int currentAlgorithm = 0;
 
 float fontSize = 14;
 
@@ -18,7 +18,8 @@ Textlabel nameLabel;
 
 void setup(){
     
-    size(900, 700);
+    //size(900, 700);
+    fullScreen();
     
     arr = new int[numVals];
     
@@ -31,7 +32,7 @@ void setup(){
     background(0);
     shuffle();
 
-    frameRate(1);
+    //frameRate(1);
 
     algos = new SortingAlgorithm[7];
 
@@ -95,9 +96,11 @@ void mousePressed(){
 
 void keyPressed(){
     
-    if(keyCode == 32)
-        reset();   
-    else if(keyCode == 38){
+    if(keyCode == 32){
+    
+        reset();
+        
+    }else if(keyCode == 38){
     
         currentAlgorithm = (currentAlgorithm + 1) % algos.length;
         reset();
@@ -122,8 +125,10 @@ void reset(){
     algos[currentAlgorithm].reset();
     // Record the new starting time
     startTime = millis();
+    pauseTime = 0;
     // Reset the time label's color
     timeLabel.setColorValue(color(255));
+    timeLabel.setText(getTimeString(0));
     nameLabel.setText(algos[currentAlgorithm].name);
     // Shuffle the array
     shuffle();
@@ -173,18 +178,7 @@ void draw(){
             }
         
         }else if(algo instanceof QuickSort){
-        
-            //QuickSort q = (QuickSort)algo;
-            
-            //if(i == q.low || i == q.high){
-            
-            //    stroke(255);
-                
-            //}else if(i == q.pivot){
-            
-            //    stroke(255, 0, 255);
-            
-            //}
+           
             
         
         }
@@ -201,16 +195,22 @@ void draw(){
     
     }
     
-    float timeSeconds = round((millis() - startTime - pauseTime)/100.0)/10.0;
-    int timeMinutes = ((int)timeSeconds / 60);
-    int timeHours = timeMinutes / 60;
-    
-    String timeString = String.format("%d:%d:%.1f", timeHours, timeMinutes%60, timeSeconds%60);
+    String timeString = getTimeString(millis());
     
     swapsLabel.setText("Swaps: " + algo.numSwaps);
     compsLabel.setText("Comps: " + algo.numComps);
     timeLabel.setText("Time elapsed: " + timeString);
     
+}
+
+String getTimeString(int time){
+
+    float timeSeconds = round((time - startTime - pauseTime)/100.0)/10.0;
+    int timeMinutes = ((int)timeSeconds / 60);
+    int timeHours = timeMinutes / 60;
+    
+    return String.format("%d:%d:%.1f", timeHours, timeMinutes%60, timeSeconds%60);
+
 }
 
 void shuffle(){

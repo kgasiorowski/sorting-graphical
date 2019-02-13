@@ -3,27 +3,17 @@ import java.util.Stack; //<>//
 class QuickSort extends SortingAlgorithm{
 
     Stack<StackFrame> callStack;
+
+    int low, high;
+    int pivot;
     
     QuickSort(){
     
         callStack = new Stack();
         callStack.push(new StackFrame(0, arr.length-1));
+        initCall(callStack.peek());
         name = "Quick Sort";
     
-        i = j = 0;
-    
-    }
-    
-    
-    // This function should take a sub-array from index _low to _high and
-    // pick some pivot and guarantee that:
-    // Anything in that sub-array that's less than the pivot is below it, anything larger is above it
-    // The function returns the new location of the pivot
-    // In other words, the returned index is guaranteed to be correct
-    void partition(int low, int high){
-        
-        
-        
     }
     
     private void printarr(){
@@ -46,50 +36,70 @@ class QuickSort extends SortingAlgorithm{
     
     }
     
+    void initCall(StackFrame current){
+    
+        low = current.low;
+        high = current.high;
+        
+        // pick the pivot
+        //int middle = low + (high - low) / 2;
+        int middle = (low + high) / 2;
+        pivot = arr[middle];
+ 
+        // make left < pivot and right > pivot
+        i = low; 
+        j = high;
+    
+    }
+    
     void step(){
     
         if(sorted)
             return;
         
-        while(!callStack.empty()){
+        if(!callStack.empty()){
         
-            StackFrame current = callStack.pop();
-        
-            int low = current.low;
-            int high = current.high;
-            
-            // pick the pivot
-            int middle = low + (high - low) / 2;
-            int pivot = arr[middle];
-     
-            // make left < pivot and right > pivot
-            i = low; 
-            j = high;
-            while (i <= j) {
-                while (arr[i] < pivot) {
+            if(i <= j) {
+                
+                while (arr[i] < pivot){
                     i++;
+                    numComps++;
+                }
+                
+                numComps++;
+                
+                while (arr[j] > pivot){
+                    j--;
+                    numComps++;
                 }
      
-                while (arr[j] > pivot) {
-                    j--;
-                }
+                numComps++;
      
                 if (i <= j) {
                     swap(i,j);
                     i++;
                     j--;
                 }
-            }
             
-            if (low < j)
-                callStack.push(new StackFrame(low, j));
-     
-            if (high > i)
-                callStack.push(new StackFrame(i, high)); 
+            }else{
+             
+                // Push the recursive calls to the stack
+                if (high > i)
+                    callStack.push(new StackFrame(i, high));
+                
+                if (low < j)
+                    callStack.push(new StackFrame(low, j));
+                
+                // Initialize the new stack frame we have after the last one ended
+                initCall(callStack.pop());
+                
+            }
         
+        }else{
+        
+            sorted = true;
+    
         }
-        
-        sorted = true;
     
     }
 
@@ -98,8 +108,7 @@ class QuickSort extends SortingAlgorithm{
         super.reset();
         callStack = new Stack();
         callStack.push(new StackFrame(0, arr.length-1));
-        i = j = 0;
-        
+        initCall(callStack.peek());
     
     }
 
