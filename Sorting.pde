@@ -1,7 +1,7 @@
 import controlP5.*;
 
-int arr[];
-int numVals = 20;
+int arr[] = {5,4,1,7,9,10,6,8,2,3};
+int numVals = 300;
 float rect_pixel_width;
 float startTime;
 float pauseTime;
@@ -31,7 +31,7 @@ void setup(){
     background(0);
     shuffle();
 
-    frameRate(60);
+    frameRate(1);
 
     algos = new SortingAlgorithm[7];
 
@@ -174,17 +174,17 @@ void draw(){
         
         }else if(algo instanceof QuickSort){
         
-            QuickSort q = (QuickSort)algo;
+            //QuickSort q = (QuickSort)algo;
             
-            if(i == q.low || i == q.high){
+            //if(i == q.low || i == q.high){
             
-                stroke(255);
+            //    stroke(255);
                 
-            }else if(i == q.pivot){
+            //}else if(i == q.pivot){
             
-                stroke(255, 0, 255);
+            //    stroke(255, 0, 255);
             
-            }
+            //}
             
         
         }
