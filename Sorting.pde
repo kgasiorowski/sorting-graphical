@@ -1,7 +1,7 @@
 import controlP5.*;
 
 int arr[];
-int numVals = 250;
+int numVals = 100;
 float rect_pixel_width;
 float startTime;
 float pauseTime;
@@ -18,8 +18,7 @@ Textlabel nameLabel;
 
 void setup(){
     
-    //size(900, 700);
-    fullScreen();
+    size(900, 700);
     
     arr = new int[numVals];
     
@@ -31,8 +30,6 @@ void setup(){
     rectMode(CORNER);
     background(0);
     shuffle();
-
-    //frameRate(1);
 
     algos = new SortingAlgorithm[7];
 
@@ -73,26 +70,26 @@ void setup(){
 }
 
 boolean looping = true;
-void mousePressed(){
-
-    if(algos[currentAlgorithm].sorted)
-        return;
+//void mousePressed(){
     
-    if(looping){
+//    if(algos[currentAlgorithm].sorted)
+//        return;
     
-        pauseTime -= millis();
-        noLoop();
+//    if(looping){
     
-    }else{
+//        pauseTime -= millis();
+//        noLoop();
     
-        pauseTime += millis();
-        loop();
+//    }else{
+    
+//        pauseTime += millis();
+//        loop();
         
-    }
+//    }
         
-    looping = !looping;
+//    looping = !looping;
 
-}
+//}
 
 void keyPressed(){
     
@@ -177,14 +174,21 @@ void draw(){
             
             }
         
-        }else if(algo instanceof QuickSort){
-           
-            
-        
-        }
+        } 
             
         fill(clr);
         rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
+    
+        if(algo instanceof QuickSort){
+            
+            if(i == ((QuickSort)algo).pivot){
+            
+                stroke(255);
+                line(i*rect_pixel_width - (0.5 * rect_pixel_width), 0, i*rect_pixel_width - (0.5 * rect_pixel_width), height);
+            
+            }
+        
+        }
     
     }
 
@@ -192,6 +196,8 @@ void draw(){
     
         timeLabel.setColorValue(color(0,255,0));
         noLoop();
+    
+    //    reset();
     
     }
     
@@ -241,26 +247,28 @@ color mapColor(int val){
     int green = 0;
     int blue = 0;
     
-    int mappedVal = int(map(val, 0, arr.length, 0, 100));
+    int maxMap = 100000;
     
-    if(mappedVal <= 25){
+    int mappedVal = int(map(val, 0, arr.length, 0, maxMap));
+    
+    if(mappedVal <= maxMap*.25){
     
         // Lowest level, blue -> cyan
         red = 0;
-        green = int(map(mappedVal, 0, 25, 0, 255));
+        green = int(map(mappedVal, 0, maxMap*.25, 0, 255));
         blue = 255;
     
-    }else if(mappedVal > 25 && mappedVal <= 50){
+    }else if(mappedVal > maxMap*.25 && mappedVal <= maxMap*.50){
     
         // 2nd level, teal -> green
         red = 0;
         green = 255;
-        blue = int(map(mappedVal, 25, 50, 255, 0));
+        blue = int(map(mappedVal, maxMap*.25, maxMap*.50, 255, 0));
 
-    }else if(mappedVal > 50 && mappedVal <= 75){
+    }else if(mappedVal > maxMap*.50 && mappedVal <= maxMap*.75){
         
         // 3rd level, green -> yellow
-        red = int(map(mappedVal, 50, 75, 0, 255));
+        red = int(map(mappedVal, maxMap*.50, maxMap*.75, 0, 255));
         green = 255;
         blue = 0;
     
@@ -268,7 +276,7 @@ color mapColor(int val){
     
         // Top level, yellow -> red
         red = 255;
-        green = int(map(mappedVal, 75, 100, 255, 0));
+        green = int(map(mappedVal, maxMap*.75, maxMap, 255, 0));
         blue = 0;
     
     }

@@ -16,26 +16,6 @@ class QuickSort extends SortingAlgorithm{
     
     }
     
-    private void printarr(){
-    
-        for(int i = 0; i < arr.length; i++){
-            
-            print(String.format("%-3d", i));
-        
-        }
-        
-        println();
-        
-        for(int i : arr){
-        
-            print(String.format("%-3d", i));
-        
-        }
-    
-        println();
-    
-    }
-    
     void initCall(StackFrame current){
     
         low = current.low;
@@ -49,6 +29,9 @@ class QuickSort extends SortingAlgorithm{
         // make left < pivot and right > pivot
         i = low; 
         j = high;
+    
+        if(callStack.empty())
+            pivot = -1;
     
     }
     
@@ -98,6 +81,7 @@ class QuickSort extends SortingAlgorithm{
         }else{
         
             sorted = true;
+            //pivot = -1;
     
         }
     
