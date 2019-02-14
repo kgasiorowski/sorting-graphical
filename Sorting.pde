@@ -17,7 +17,8 @@ Textlabel nameLabel;
 
 void setup(){
     
-    size(1200, 800);
+    //size(1200, 800);
+    fullScreen();
     
     println(width, height);
     rectMode(CORNER);
@@ -141,6 +142,15 @@ void draw(){
     
     SortingAlgorithm algo = algos[currentAlgorithm];
     
+    if(algo.sorted){
+    
+        //noLoop();
+        delay(3000);
+        reset();
+        return;
+    
+    }
+    
     algo.step();
     
     for(int i = 0; i < arr.length; i++){
@@ -148,45 +158,49 @@ void draw(){
         color clr = mapColor(arr[i]);
         
         stroke(clr);
-        
-        if(algo instanceof BubbleSort){
-        
-            if(i == algo.i || i == arr.length - algo.j - 1){
-            
-                stroke(255);
-            
-            }else{
-            
-                stroke(clr);
-            
-            }
-        
-        }else if(algo instanceof SelectionSort){
-        
-            if(i == algo.i || i == algo.j+1 || i == ((SelectionSort)(algo)).biggest){
-            
-                stroke(255);
-            
-            }else{
-            
-                stroke(clr);
-            
-            }
-        
-        } 
-            
         fill(clr);
         rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
     
-        if(algo instanceof QuickSort){
+        stroke(255);
+    
+        if(!algo.sorted){
+    
+            if(algo instanceof QuickSort){
+                
+                if(i == ((QuickSort)algo).pivotIndex || i == algo.i || i == algo.j)
+                    horizLine(i);
             
-            if(i == ((QuickSort)algo).pivot){
+            }else if (algo instanceof BubbleSort){
+    
+                if(i == algo.i || i == arr.length-algo.j+1)
+                    horizLine(i);
             
-                stroke(255);
-                line(i*rect_pixel_width - (0.5 * rect_pixel_width), 0, i*rect_pixel_width - (0.5 * rect_pixel_width), height);
+            }else if(algo instanceof FastBubbleSort){
+            
+                if(i == arr.length-algo.j+1){
+                
+                    horizLine(i);
+                
+                }
+            
+            }else if(algo instanceof SelectionSort){
+            
+                if(i == ((SelectionSort)algo).biggest+1 || i == algo.i){
+                
+                    horizLine(i);
+                
+                }
+            
+            }else if(algo instanceof InsertionSort){
+            
+                if(i == algo.j || i == algo.i){
+                
+                    horizLine(i);
+                
+                }
             
             }
-        
+    
         }
     
     }
@@ -199,17 +213,6 @@ void draw(){
     swapsLabel.setText("Swaps: " + algo.numSwaps);
     compsLabel.setText("Comps: " + algo.numComps);
     timeLabel.setText("Time elapsed: " + timeString);
-
-    if(algo.sorted){
-    
-        //noLoop();
-        delay(3000);
-    
-        reset();
-    
-    }
-    
-    
     
 }
 
@@ -223,9 +226,21 @@ String getTimeString(int time){
 
 }
 
+void horizLine(int i){
+
+    line(i*rect_pixel_width - (0.5 * rect_pixel_width), 0, i*rect_pixel_width - (0.5 * rect_pixel_width), height);
+
+}
+
 void shuffle(int numVals){
 
     arr = new int[numVals];
+    
+    //for(int i = 0; i < numVals; i++){
+    
+    //    arr[i] = int(random(1,numVals));
+    
+    //}
     
     int i = 1;
     while((arr[i-1] = i++) < arr.length);
@@ -246,7 +261,7 @@ void shuffle(int numVals){
 
 float getRectHeight(int val){
 
-    return map(val, 0, arr.length, height, height*.05);
+    return map(val, 0, arr.length, height, 0);
 
 }
 

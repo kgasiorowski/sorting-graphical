@@ -10,7 +10,7 @@ class QuickSort extends SortingAlgorithm{
     
     QuickSort(){
     
-        arrSize = 300;
+        arrSize = 500;
         callStack = new Stack();
         callStack.push(new StackFrame(0, arrSize-1));
         shuffle(arrSize);
@@ -94,7 +94,6 @@ class QuickSort extends SortingAlgorithm{
     void reset(){
     
         super.reset();
-        arrSize = 300;
         callStack = new Stack();
         callStack.push(new StackFrame(0, arrSize-1));
         shuffle(arrSize);
