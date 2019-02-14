@@ -1,12 +1,11 @@
 import controlP5.*;
 
 int arr[];
-int numVals = 100;
 float rect_pixel_width;
 float startTime;
 float pauseTime;
 SortingAlgorithm[] algos;
-int currentAlgorithm = 0;
+int currentAlgorithm;
 
 float fontSize = 14;
 
@@ -18,18 +17,11 @@ Textlabel nameLabel;
 
 void setup(){
     
-    size(900, 700);
+    size(1200, 800);
     
-    arr = new int[numVals];
-    
-    int i = 1;
-    while((arr[i-1] = i++) < arr.length);
-
     println(width, height);
-    rect_pixel_width = (float)width/(float)(arr.length);
     rectMode(CORNER);
     background(0);
-    shuffle();
 
     algos = new SortingAlgorithm[7];
 
@@ -40,6 +32,12 @@ void setup(){
     algos[4] = new InsertionSort();
     algos[5] = new FastInsertionSort();
     algos[6] = new QuickSort();
+
+    currentAlgorithm = 0;
+
+    shuffle(algos[currentAlgorithm].arrSize);
+
+    rect_pixel_width = (float)width/(float)(algos[currentAlgorithm].arrSize);
 
     cp5 = new ControlP5(this);
     
@@ -115,9 +113,11 @@ void reset(){
 
     // Stop the program from looping
     noLoop();
-    // Re-fill the array
-    int i = 1;
-    while((arr[i-1] = i++) < arr.length);
+    
+    // Shuffle the array
+    shuffle(algos[currentAlgorithm].arrSize);
+    rect_pixel_width = (float)width/(float)(algos[currentAlgorithm].arrSize);
+    
     // Let the algorithm reset
     algos[currentAlgorithm].reset();
     // Record the new starting time
@@ -127,8 +127,7 @@ void reset(){
     timeLabel.setColorValue(color(255));
     timeLabel.setText(getTimeString(0));
     nameLabel.setText(algos[currentAlgorithm].name);
-    // Shuffle the array
-    shuffle();
+    
     
     // Now re-start everything
     redraw();
@@ -192,20 +191,25 @@ void draw(){
     
     }
 
-    if(algo.sorted){
-    
-        timeLabel.setColorValue(color(0,255,0));
-        noLoop();
-    
-    //    reset();
-    
-    }
-    
     String timeString = getTimeString(millis());
+    
+    if(algo.sorted)
+        timeLabel.setColorValue(color(0,255,0));
     
     swapsLabel.setText("Swaps: " + algo.numSwaps);
     compsLabel.setText("Comps: " + algo.numComps);
     timeLabel.setText("Time elapsed: " + timeString);
+
+    if(algo.sorted){
+    
+        //noLoop();
+        delay(3000);
+    
+        reset();
+    
+    }
+    
+    
     
 }
 
@@ -219,9 +223,14 @@ String getTimeString(int time){
 
 }
 
-void shuffle(){
+void shuffle(int numVals){
 
-    for(int i = 0; i < arr.length; i++){
+    arr = new int[numVals];
+    
+    int i = 1;
+    while((arr[i-1] = i++) < arr.length);
+    
+    for(i = 0; i < arr.length; i++){
     
         int swap = 0;
         

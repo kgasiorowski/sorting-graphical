@@ -5,6 +5,7 @@ class BubbleSort extends SortingAlgorithm{
         i = 0;
         j = 0;
         name = "Bubble Sort";
+        arrSize = 50;
     
     }
     

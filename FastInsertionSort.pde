@@ -5,7 +5,8 @@ class FastInsertionSort extends SortingAlgorithm{
     
     FastInsertionSort(){
     
-        j = arr.length-1;
+        arrSize = 300;
+        j = arrSize-1;
         i = j-1;
         name = "Fast Insertion Sort";
     

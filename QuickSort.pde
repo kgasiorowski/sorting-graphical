@@ -6,24 +6,28 @@ class QuickSort extends SortingAlgorithm{
 
     int low, high;
     int pivot;
+    int pivotIndex;
     
     QuickSort(){
     
+        arrSize = 300;
         callStack = new Stack();
-        callStack.push(new StackFrame(0, arr.length-1));
+        callStack.push(new StackFrame(0, arrSize-1));
+        shuffle(arrSize);
         initCall(callStack.peek());
         name = "Quick Sort";
-    
+        
     }
     
     void initCall(StackFrame current){
-    
+        
         low = current.low;
         high = current.high;
         
         // pick the pivot
         //int middle = low + (high - low) / 2;
         int middle = (low + high) / 2;
+        pivotIndex = middle;
         pivot = arr[middle];
  
         // make left < pivot and right > pivot
@@ -90,8 +94,10 @@ class QuickSort extends SortingAlgorithm{
     void reset(){
     
         super.reset();
+        arrSize = 300;
         callStack = new Stack();
-        callStack.push(new StackFrame(0, arr.length-1));
+        callStack.push(new StackFrame(0, arrSize-1));
+        shuffle(arrSize);
         initCall(callStack.peek());
     
     }

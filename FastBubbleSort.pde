@@ -4,6 +4,7 @@ class FastBubbleSort extends SortingAlgorithm{
     
         j = 0;
         name = "Fast Bubble Sort";
+        arrSize = 300;
     
     }
     

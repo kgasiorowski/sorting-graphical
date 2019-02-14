@@ -4,7 +4,8 @@ class FastSelectionSort extends SortingAlgorithm{
     
     FastSelectionSort(){
         
-        j = arr.length-1; 
+        arrSize = 300;
+        j = arrSize-1; 
         biggest = j;
         name = "Fast Selection Sort";
     

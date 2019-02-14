@@ -5,7 +5,8 @@ class InsertionSort extends SortingAlgorithm{
     
     InsertionSort(){
     
-        j = arr.length-1;
+        arrSize = 50;
+        j = arrSize-1;
         i = j-1;
         name = "Insertion Sort";
     

@@ -5,6 +5,7 @@ abstract class SortingAlgorithm{
     int numComps = 0;
     int numSwaps = 0;
     int i, j;
+    int arrSize;
     
     abstract void step();
     

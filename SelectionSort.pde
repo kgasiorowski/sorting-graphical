@@ -4,8 +4,9 @@ class SelectionSort extends SortingAlgorithm{
     
     SelectionSort(){
         
+        arrSize = 50;
         i = 0; 
-        j = arr.length-1; 
+        j = arrSize-1; 
         biggest = j;
         name = "Selection Sort";
     
