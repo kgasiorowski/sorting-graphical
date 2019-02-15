@@ -3,6 +3,7 @@ import java.util.Stack; //<>//
 class QuickSort extends SortingAlgorithm{
 
     Stack<StackFrame> callStack;
+    StackFrame lastPopped;
 
     int low, high;
     int pivot;
@@ -10,7 +11,7 @@ class QuickSort extends SortingAlgorithm{
     
     QuickSort(){
     
-        arrSize = 500;
+        arrSize = 800;
         callStack = new Stack();
         callStack.push(new StackFrame(0, arrSize-1));
         shuffle(arrSize);
@@ -25,7 +26,6 @@ class QuickSort extends SortingAlgorithm{
         high = current.high;
         
         // pick the pivot
-        //int middle = low + (high - low) / 2;
         int middle = (low + high) / 2;
         pivotIndex = middle;
         pivot = arr[middle];
@@ -34,8 +34,10 @@ class QuickSort extends SortingAlgorithm{
         i = low; 
         j = high;
     
-        if(callStack.empty())
+        if(callStack.empty()){
             pivot = -1;
+            pivotIndex = -1;
+        }
     
     }
     
@@ -78,14 +80,15 @@ class QuickSort extends SortingAlgorithm{
                     callStack.push(new StackFrame(low, j));
                 
                 // Initialize the new stack frame we have after the last one ended
-                initCall(callStack.pop());
+                lastPopped = callStack.pop();
+                
+                initCall(lastPopped);
                 
             }
         
         }else{
         
             sorted = true;
-            //pivot = -1;
     
         }
     

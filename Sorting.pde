@@ -14,13 +14,13 @@ Textlabel swapsLabel;
 Textlabel compsLabel;
 Textlabel timeLabel;
 Textlabel nameLabel;
+Textlabel sizeLabel;
+Textlabel stackLabel;
 
 void setup(){
     
-    //size(1200, 800);
-    fullScreen();
+    size(1200, 800);
     
-    println(width, height);
     rectMode(CORNER);
     background(0);
 
@@ -63,33 +63,23 @@ void setup(){
         .setColorValue(color(255))
         .setFont(createFont("",fontSize));
 
+    sizeLabel = cp5.addTextlabel("label4")
+        .setPosition(10, 90)
+        .setColorValue(color(255))
+        .setFont(createFont("", fontSize));
+
+    stackLabel = cp5.addTextlabel("label5")
+        .setPosition(10, 110)
+        .setColorValue(color(255))
+        .setFont(createFont("", fontSize))
+        .setText("");
+
     startTime = millis();
     pauseTime = 0;
 
 }
 
-boolean looping = true;
-//void mousePressed(){
-    
-//    if(algos[currentAlgorithm].sorted)
-//        return;
-    
-//    if(looping){
-    
-//        pauseTime -= millis();
-//        noLoop();
-    
-//    }else{
-    
-//        pauseTime += millis();
-//        loop();
-        
-//    }
-        
-//    looping = !looping;
-
-//}
-
+boolean drawLines = false;
 void keyPressed(){
     
     if(keyCode == 32){
@@ -105,6 +95,10 @@ void keyPressed(){
     
         currentAlgorithm = currentAlgorithm - 1 < 0 ? algos.length-1 : currentAlgorithm - 1;
         reset();
+    
+    }else if(keyCode == 81){
+    
+        drawLines = !drawLines;
     
     }
 
@@ -129,13 +123,13 @@ void reset(){
     timeLabel.setText(getTimeString(0));
     nameLabel.setText(algos[currentAlgorithm].name);
     
-    
     // Now re-start everything
     redraw();
     loop();
 
 }
 
+boolean shuffling;
 void draw(){
     
     background(0);
@@ -146,6 +140,7 @@ void draw(){
     
         //noLoop();
         delay(3000);
+        currentAlgorithm = (currentAlgorithm + 1) % algos.length;
         reset();
         return;
     
@@ -160,15 +155,36 @@ void draw(){
         stroke(clr);
         fill(clr);
         rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
-    
         stroke(255);
     
-        if(!algo.sorted){
+        stackLabel.setText("");
     
+        if(!algo.sorted){
+            
             if(algo instanceof QuickSort){
                 
-                if(i == ((QuickSort)algo).pivotIndex || i == algo.i || i == algo.j)
+                QuickSort q = (QuickSort)algo;
+                
+                if(i == ((QuickSort)algo).pivotIndex)
                     horizLine(i);
+            
+                if(drawLines){
+            
+                    if(q.lastPopped != null)
+                        if(i == q.lastPopped.low+1)
+                            horizLine(i, color(0, 0, 255));
+                        else if(i == q.lastPopped.high)
+                            horizLine(i, color(255, 0, 0));
+                
+                    for(StackFrame s : q.callStack)
+                        if(i == s.low+1)
+                            horizLine(i, color(0, 0, 255));
+                        else if(i == s.high)
+                            horizLine(i, color(255, 0, 0));
+                
+                    stackLabel.setText("Stack size: "+q.callStack.size());
+            
+                }
             
             }else if (algo instanceof BubbleSort){
     
@@ -177,27 +193,18 @@ void draw(){
             
             }else if(algo instanceof FastBubbleSort){
             
-                if(i == arr.length-algo.j+1){
-                
+                if(i == arr.length-algo.j+1)
                     horizLine(i);
                 
-                }
-            
             }else if(algo instanceof SelectionSort){
             
-                if(i == ((SelectionSort)algo).biggest+1 || i == algo.i){
-                
+                if(i == ((SelectionSort)algo).biggest+1 || i == algo.i)
                     horizLine(i);
-                
-                }
             
             }else if(algo instanceof InsertionSort){
             
-                if(i == algo.j || i == algo.i){
-                
+                if(i == algo.j)
                     horizLine(i);
-                
-                }
             
             }
     
@@ -211,8 +218,9 @@ void draw(){
         timeLabel.setColorValue(color(0,255,0));
     
     swapsLabel.setText("Swaps: " + algo.numSwaps);
-    compsLabel.setText("Comps: " + algo.numComps);
+    compsLabel.setText("Comparisons: " + algo.numComps);
     timeLabel.setText("Time elapsed: " + timeString);
+    sizeLabel.setText("Array size: " + algo.arrSize);
     
 }
 
@@ -232,15 +240,16 @@ void horizLine(int i){
 
 }
 
+void horizLine(int i, color clr){
+
+    stroke(clr);
+    horizLine(i);
+
+}
+
 void shuffle(int numVals){
 
     arr = new int[numVals];
-    
-    //for(int i = 0; i < numVals; i++){
-    
-    //    arr[i] = int(random(1,numVals));
-    
-    //}
     
     int i = 1;
     while((arr[i-1] = i++) < arr.length);

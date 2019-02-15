@@ -1,11 +1,8 @@
 class InsertionSort extends SortingAlgorithm{
-
-    // j -> sorted array index
-    // i -> searching for correct array index/swap index
     
     InsertionSort(){
     
-        arrSize = 50;
+        arrSize = 100;
         j = arrSize-1;
         i = j-1;
         name = "Insertion Sort";
