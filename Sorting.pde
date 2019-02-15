@@ -1,25 +1,25 @@
-import controlP5.*;
+//import controlP5.*;
+
+String videoPath = "./img/";
 
 int arr[];
 float rect_pixel_width;
 float startTime;
-float pauseTime;
 ArrayList<SortingAlgorithm> algos;
 int currentAlgorithm;
 
 float fontSize = 14;
 
-ControlP5 cp5;
-Textlabel swapsLabel;
-Textlabel compsLabel;
-Textlabel timeLabel;
-Textlabel nameLabel;
-Textlabel sizeLabel;
-Textlabel stackLabel;
+final String shuffleText = "Shuffling";
+
+String nameText = shuffleText;
+String timeText = "";
+String comparisonsText = "";
+String swapsText = "";
 
 void setup(){
     
-    size(1200, 800);
+    size(1280, 720);
     
     rectMode(CORNER);
     background(0);
@@ -27,71 +27,22 @@ void setup(){
     algos = new ArrayList();
 
     algos.add(new BubbleSort());
-    //algos.add(new FastBubbleSort());
     algos.add(new SelectionSort());
-    //algos.add(new FastSelectionSort());
     algos.add(new InsertionSort());
-    //algos.add(new FastInsertionSort());
     algos.add(new QuickSort());
 
-    currentAlgorithm = 0;
+    currentAlgorithm = 3;
 
-    shuffle(algos.get(currentAlgorithm).arrSize);
+    reset(false);
 
-    rect_pixel_width = (float)width/(float)(algos.get(currentAlgorithm).arrSize);
-
-    cp5 = new ControlP5(this);
-    
-    nameLabel = cp5.addTextlabel("meh lol")
-        .setPosition(10, 10)
-        .setColorValue(color(255))
-        .setFont(createFont("",fontSize))
-        .setText(algos.get(currentAlgorithm).name);
-        
-    timeLabel = cp5.addTextlabel("label3")
-        .setPosition(10, 30)
-        .setColorValue(color(255))
-        .setFont(createFont("",fontSize));
-        
-    swapsLabel = cp5.addTextlabel("label")
-        .setPosition(10, 50)
-        .setColorValue(color(255))
-        .setFont(createFont("",fontSize));
-
-    compsLabel = cp5.addTextlabel("label2")
-        .setPosition(10, 70)
-        .setColorValue(color(255))
-        .setFont(createFont("",fontSize));
-
-    stackLabel = cp5.addTextlabel("label5")
-        .setPosition(10, 90)
-        .setColorValue(color(255))
-        .setFont(createFont("", fontSize))
-        .setText("");
-
-    startTime = millis();
-    pauseTime = 0;
+    frameRate(60);
 
 }
 
 boolean drawLines = false;
 void keyPressed(){
     
-    if(keyCode == 32){
-    
-        reset(true);
-        
-    }else if(keyCode == 38){
-    
-        currentAlgorithm = (currentAlgorithm + 1) % algos.size();
-        reset(true);
-    
-    }else if(keyCode == 40){
-    
-        currentAlgorithm = currentAlgorithm - 1 < 0 ? algos.size()-1 : currentAlgorithm - 1;
-        reset(true);
-    
-    }else if(keyCode == 81){
+    if(keyCode == 81){
     
         drawLines = !drawLines;
     
@@ -100,41 +51,32 @@ void keyPressed(){
 }
 
 void reset(boolean shuffle){
-
-    // Stop the program from looping
-    noLoop();
+    
+    // Re-initialize the array
+    arr = new int[algos.get(currentAlgorithm).arrSize];
+        
+    int i = 1;
+    while((arr[i-1] = i++) < arr.length);
     
     // Shuffle the array
-    if(shuffle)
-        shuffle(algos.get(currentAlgorithm).arrSize);
-    else{
+    if(shuffle){
     
-        arr = new int[algos.get(currentAlgorithm).arrSize];
-        
-        int i = 1;
-        while((arr[i-1] = i++) < arr.length);
+        shuffleArray();
     
     }
     
+    // Re-calculate the rectangle width
     rect_pixel_width = (float)width/(float)(algos.get(currentAlgorithm).arrSize);
     
-    // Let the algorithm reset
+    // Let the algorithm reset itself
     algos.get(currentAlgorithm).reset();
+    
     // Record the new starting time
     startTime = millis();
-    pauseTime = 0;
-    // Reset the time label's color
-    timeLabel.setColorValue(color(255));
-    timeLabel.setText(getTimeString(0));
-    nameLabel.setText(algos.get(currentAlgorithm).name);
-    
-    // Now re-start everything
-    redraw();
-    loop();
 
 }
 
-boolean shuffling = false;
+boolean shuffling = true;
 int shuffleCount;
 void draw(){
     
@@ -145,17 +87,24 @@ void draw(){
     if(algo.sorted && !shuffling){
     
         delay(2000);
-        currentAlgorithm = (currentAlgorithm + 1) % algos.size();
-        reset(false);
-        shuffling = true;
-        shuffleCount = 0;
         
-        nameLabel.setText("Shuffling!");
-        swapsLabel.setText("");
-        compsLabel.setText("");
-        timeLabel.setText("");
+        // For now we just loop through all the algorithms once
+        if(++currentAlgorithm >= algos.size()){
         
-        return;
+            exit();
+        
+        }else{
+        
+            reset(false);
+            shuffling = true;
+            shuffleCount = 0;
+            
+            nameText = shuffleText;
+            timeText = "";
+            comparisonsText = "";
+            swapsText = "";
+    
+        }
     
     }
     
@@ -166,25 +115,24 @@ void draw(){
         
             shuffling = false;
             delay(2000);
-            return;
+            startTime = millis();
+        
+        }else{
+        
+            int swap = int(random(arr.length));
+            
+            if(swap != shuffleCount){
+            
+                arr[shuffleCount] = arr[swap] + arr[shuffleCount];
+                arr[swap] = arr[shuffleCount] - arr[swap];
+                arr[shuffleCount] = arr[shuffleCount] - arr[swap];
+            
+            }
+            
+            shuffleCount++;
         
         }
         
-        int swap = int(random(arr.length));
-        
-        if(swap != shuffleCount){
-        
-            arr[shuffleCount] = arr[swap] + arr[shuffleCount];
-            arr[swap] = arr[shuffleCount] - arr[swap];
-            arr[shuffleCount] = arr[shuffleCount] - arr[swap];
-        
-        }
-        //int temp = arr[shuffleCount];
-        //arr[shuffleCount] = arr[swap1];
-        //arr[swap1] = temp;
-        
-        shuffleCount++;
-    
     }else{
     
         // Otherwise continue the algorithm
@@ -199,10 +147,8 @@ void draw(){
         
         stroke(clr);
         fill(clr);
-        rect(i * rect_pixel_width, getRectHeight(arr[i]), rect_pixel_width, height);
+        rect(i * rect_pixel_width, map(arr[i], 0, arr.length, height, 0), rect_pixel_width, height);
         stroke(255);
-    
-        stackLabel.setText("");
     
         if(!algo.sorted && !shuffling){
             
@@ -226,8 +172,6 @@ void draw(){
                             horizLine(i, color(0, 0, 255));
                         else if(i == s.high)
                             horizLine(i, color(255, 0, 0));
-                
-                    stackLabel.setText("Stack size: "+q.callStack.size());
             
                 }
             
@@ -258,24 +202,32 @@ void draw(){
     }
 
     if(!shuffling){
-
-        String timeString = getTimeString(millis());
         
-        if(algo.sorted)
-            timeLabel.setColorValue(color(0,255,0));
-        
-        nameLabel.setText(algo.name + " (" + arr.length + " values)");
-        swapsLabel.setText("Swaps: " + algo.numSwaps);
-        compsLabel.setText("Comparisons: " + algo.numComps);
-        timeLabel.setText(timeString);
+        nameText = algo.name + " (" + arr.length + " values)";
+        timeText = getTimeString(millis());
+        swapsText = "Swaps: " + algo.numSwaps;
+        comparisonsText = "Comparisons: " + algo.numComps;
     
     }
+    
+    fill(255);
+    
+    text(nameText, 10, 20);
+    if(!shuffling && algo.sorted)
+        fill(0,255,0);
+        
+    text(timeText, 10, 40);
+    
+    fill(255);
+    
+    text(swapsText, 10, 60);
+    text(comparisonsText, 10, 80);
     
 }
 
 String getTimeString(int time){
 
-    float timeSeconds = round((time - startTime - pauseTime)/100.0)/10.0;
+    float timeSeconds = round((time - startTime)/100.0)/10.0;
     int timeMinutes = ((int)timeSeconds / 60);
     int timeHours = timeMinutes / 60;
     
@@ -296,30 +248,22 @@ void horizLine(int i, color clr){
 
 }
 
-void shuffle(int numVals){
-
-    arr = new int[numVals];
+void shuffleArray(){
     
-    int i = 1;
-    while((arr[i-1] = i++) < arr.length);
-    
-    for(i = 0; i < arr.length; i++){
+    for(int i = 0; i < arr.length; i++){
     
         int swap = 0;
         
         swap = int(random(arr.length));
         
-        int temp = arr[i];
-        arr[i] = arr[swap];
-        arr[swap] = temp;
+        if(swap == i)
+            continue;
+        
+        arr[i] = arr[swap] + arr[i];
+        arr[swap] = arr[i] - arr[swap];
+        arr[i] = arr[i] - arr[swap];
         
     }
-
-}
-
-float getRectHeight(int val){
-
-    return map(val, 0, arr.length, height, 0);
 
 }
 
