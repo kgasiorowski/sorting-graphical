@@ -2,7 +2,7 @@ class InsertionSort extends SortingAlgorithm{
     
     InsertionSort(){
     
-        arrSize = 100;
+        arrSize = 50;
         j = arrSize-1;
         i = j-1;
         name = "Insertion Sort";

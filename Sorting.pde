@@ -4,7 +4,7 @@ int arr[];
 float rect_pixel_width;
 float startTime;
 float pauseTime;
-SortingAlgorithm[] algos;
+ArrayList<SortingAlgorithm> algos;
 int currentAlgorithm;
 
 float fontSize = 14;
@@ -24,21 +24,21 @@ void setup(){
     rectMode(CORNER);
     background(0);
 
-    algos = new SortingAlgorithm[7];
+    algos = new ArrayList();
 
-    algos[0] = new BubbleSort();
-    algos[1] = new FastBubbleSort();
-    algos[2] = new SelectionSort();
-    algos[3] = new FastSelectionSort();
-    algos[4] = new InsertionSort();
-    algos[5] = new FastInsertionSort();
-    algos[6] = new QuickSort();
+    algos.add(new BubbleSort());
+    //algos.add(new FastBubbleSort());
+    algos.add(new SelectionSort());
+    //algos.add(new FastSelectionSort());
+    algos.add(new InsertionSort());
+    //algos.add(new FastInsertionSort());
+    algos.add(new QuickSort());
 
     currentAlgorithm = 0;
 
-    shuffle(algos[currentAlgorithm].arrSize);
+    shuffle(algos.get(currentAlgorithm).arrSize);
 
-    rect_pixel_width = (float)width/(float)(algos[currentAlgorithm].arrSize);
+    rect_pixel_width = (float)width/(float)(algos.get(currentAlgorithm).arrSize);
 
     cp5 = new ControlP5(this);
     
@@ -46,30 +46,25 @@ void setup(){
         .setPosition(10, 10)
         .setColorValue(color(255))
         .setFont(createFont("",fontSize))
-        .setText(algos[currentAlgorithm].name);
+        .setText(algos.get(currentAlgorithm).name);
         
-    swapsLabel = cp5.addTextlabel("label")
+    timeLabel = cp5.addTextlabel("label3")
         .setPosition(10, 30)
         .setColorValue(color(255))
         .setFont(createFont("",fontSize));
-
-    compsLabel = cp5.addTextlabel("label2")
+        
+    swapsLabel = cp5.addTextlabel("label")
         .setPosition(10, 50)
         .setColorValue(color(255))
         .setFont(createFont("",fontSize));
 
-    timeLabel = cp5.addTextlabel("label3")
+    compsLabel = cp5.addTextlabel("label2")
         .setPosition(10, 70)
         .setColorValue(color(255))
         .setFont(createFont("",fontSize));
 
-    sizeLabel = cp5.addTextlabel("label4")
-        .setPosition(10, 90)
-        .setColorValue(color(255))
-        .setFont(createFont("", fontSize));
-
     stackLabel = cp5.addTextlabel("label5")
-        .setPosition(10, 110)
+        .setPosition(10, 90)
         .setColorValue(color(255))
         .setFont(createFont("", fontSize))
         .setText("");
@@ -84,17 +79,17 @@ void keyPressed(){
     
     if(keyCode == 32){
     
-        reset();
+        reset(true);
         
     }else if(keyCode == 38){
     
-        currentAlgorithm = (currentAlgorithm + 1) % algos.length;
-        reset();
+        currentAlgorithm = (currentAlgorithm + 1) % algos.size();
+        reset(true);
     
     }else if(keyCode == 40){
     
-        currentAlgorithm = currentAlgorithm - 1 < 0 ? algos.length-1 : currentAlgorithm - 1;
-        reset();
+        currentAlgorithm = currentAlgorithm - 1 < 0 ? algos.size()-1 : currentAlgorithm - 1;
+        reset(true);
     
     }else if(keyCode == 81){
     
@@ -104,24 +99,34 @@ void keyPressed(){
 
 }
 
-void reset(){
+void reset(boolean shuffle){
 
     // Stop the program from looping
     noLoop();
     
     // Shuffle the array
-    shuffle(algos[currentAlgorithm].arrSize);
-    rect_pixel_width = (float)width/(float)(algos[currentAlgorithm].arrSize);
+    if(shuffle)
+        shuffle(algos.get(currentAlgorithm).arrSize);
+    else{
+    
+        arr = new int[algos.get(currentAlgorithm).arrSize];
+        
+        int i = 1;
+        while((arr[i-1] = i++) < arr.length);
+    
+    }
+    
+    rect_pixel_width = (float)width/(float)(algos.get(currentAlgorithm).arrSize);
     
     // Let the algorithm reset
-    algos[currentAlgorithm].reset();
+    algos.get(currentAlgorithm).reset();
     // Record the new starting time
     startTime = millis();
     pauseTime = 0;
     // Reset the time label's color
     timeLabel.setColorValue(color(255));
     timeLabel.setText(getTimeString(0));
-    nameLabel.setText(algos[currentAlgorithm].name);
+    nameLabel.setText(algos.get(currentAlgorithm).name);
     
     // Now re-start everything
     redraw();
@@ -129,25 +134,65 @@ void reset(){
 
 }
 
-boolean shuffling;
+boolean shuffling = false;
+int shuffleCount;
 void draw(){
     
     background(0);
+    SortingAlgorithm algo = algos.get(currentAlgorithm);
     
-    SortingAlgorithm algo = algos[currentAlgorithm];
+    // This code only runs after the algorithm has finished, and shuffling hasn't begun yet
+    if(algo.sorted && !shuffling){
     
-    if(algo.sorted){
-    
-        //noLoop();
-        delay(3000);
-        currentAlgorithm = (currentAlgorithm + 1) % algos.length;
-        reset();
+        delay(2000);
+        currentAlgorithm = (currentAlgorithm + 1) % algos.size();
+        reset(false);
+        shuffling = true;
+        shuffleCount = 0;
+        
+        nameLabel.setText("Shuffling!");
+        swapsLabel.setText("");
+        compsLabel.setText("");
+        timeLabel.setText("");
+        
         return;
     
     }
     
-    algo.step();
+    // If we're shuffling, swap one value out per frame
+    if(shuffling){
     
+        if(shuffleCount >= arr.length){
+        
+            shuffling = false;
+            delay(2000);
+            return;
+        
+        }
+        
+        int swap = int(random(arr.length));
+        
+        if(swap != shuffleCount){
+        
+            arr[shuffleCount] = arr[swap] + arr[shuffleCount];
+            arr[swap] = arr[shuffleCount] - arr[swap];
+            arr[shuffleCount] = arr[shuffleCount] - arr[swap];
+        
+        }
+        //int temp = arr[shuffleCount];
+        //arr[shuffleCount] = arr[swap1];
+        //arr[swap1] = temp;
+        
+        shuffleCount++;
+    
+    }else{
+    
+        // Otherwise continue the algorithm
+        algo.step();
+    
+    }
+    
+    // Draws the array of values + assorted lines for each algorithm
     for(int i = 0; i < arr.length; i++){
     
         color clr = mapColor(arr[i]);
@@ -159,7 +204,7 @@ void draw(){
     
         stackLabel.setText("");
     
-        if(!algo.sorted){
+        if(!algo.sorted && !shuffling){
             
             if(algo instanceof QuickSort){
                 
@@ -188,7 +233,7 @@ void draw(){
             
             }else if (algo instanceof BubbleSort){
     
-                if(i == algo.i || i == arr.length-algo.j+1)
+                if(i == arr.length-algo.j+1)
                     horizLine(i);
             
             }else if(algo instanceof FastBubbleSort){
@@ -212,15 +257,19 @@ void draw(){
     
     }
 
-    String timeString = getTimeString(millis());
+    if(!shuffling){
+
+        String timeString = getTimeString(millis());
+        
+        if(algo.sorted)
+            timeLabel.setColorValue(color(0,255,0));
+        
+        nameLabel.setText(algo.name + " (" + arr.length + " values)");
+        swapsLabel.setText("Swaps: " + algo.numSwaps);
+        compsLabel.setText("Comparisons: " + algo.numComps);
+        timeLabel.setText(timeString);
     
-    if(algo.sorted)
-        timeLabel.setColorValue(color(0,255,0));
-    
-    swapsLabel.setText("Swaps: " + algo.numSwaps);
-    compsLabel.setText("Comparisons: " + algo.numComps);
-    timeLabel.setText("Time elapsed: " + timeString);
-    sizeLabel.setText("Array size: " + algo.arrSize);
+    }
     
 }
 

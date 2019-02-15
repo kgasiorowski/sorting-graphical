@@ -8,14 +8,13 @@ class QuickSort extends SortingAlgorithm{
     int low, high;
     int pivot;
     int pivotIndex;
+    boolean starting = true;
     
     QuickSort(){
     
-        arrSize = 800;
+        arrSize = 300;
         callStack = new Stack();
-        callStack.push(new StackFrame(0, arrSize-1));
-        shuffle(arrSize);
-        initCall(callStack.peek());
+        starting = true;
         name = "Quick Sort";
         
     }
@@ -45,6 +44,15 @@ class QuickSort extends SortingAlgorithm{
     
         if(sorted)
             return;
+        
+        if(starting){
+        
+            callStack.push(new StackFrame(0, arrSize-1));
+            initCall(callStack.peek());
+            
+            starting = false;
+        
+        }
         
         if(!callStack.empty()){
         
@@ -98,9 +106,7 @@ class QuickSort extends SortingAlgorithm{
     
         super.reset();
         callStack = new Stack();
-        callStack.push(new StackFrame(0, arrSize-1));
-        shuffle(arrSize);
-        initCall(callStack.peek());
+        starting = true;
     
     }
 
