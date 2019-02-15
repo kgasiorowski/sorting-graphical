@@ -1,5 +1,3 @@
-//import controlP5.*;
-
 String videoPath = "./img/";
 
 int arr[];
@@ -31,7 +29,7 @@ void setup(){
     algos.add(new InsertionSort());
     algos.add(new QuickSort());
 
-    currentAlgorithm = 3;
+    currentAlgorithm = 0;
 
     reset(false);
 
@@ -50,6 +48,8 @@ void keyPressed(){
 
 }
 
+// Call this function to re-initialize the currently running algorithm, with
+// the option to randomize the array
 void reset(boolean shuffle){
     
     // Re-initialize the array
@@ -80,7 +80,10 @@ boolean shuffling = true;
 int shuffleCount;
 void draw(){
     
+    //Clear the background
     background(0);
+    
+    // Get a shorthand for the currently running algorithm
     SortingAlgorithm algo = algos.get(currentAlgorithm);
     
     // This code only runs after the algorithm has finished, and shuffling hasn't begun yet
@@ -88,29 +91,26 @@ void draw(){
     
         delay(2000);
         
-        // For now we just loop through all the algorithms once
+        // For now we just loop through all the algorithms once.
+        // Once we do the entire array, just exit
         if(++currentAlgorithm >= algos.size()){
         
-            exit();
+            //exit();
+            currentAlgorithm = 0;
         
-        }else{
-        
-            reset(false);
-            shuffling = true;
-            shuffleCount = 0;
-            
-            nameText = shuffleText;
-            timeText = "";
-            comparisonsText = "";
-            swapsText = "";
-    
         }
+        
+        // New algorithm, so we have to re-initialize it and tell the program to start shuffling
+        reset(false);
+        shuffling = true;
+        shuffleCount = 0;
     
     }
     
-    // If we're shuffling, swap one value out per frame
     if(shuffling){
     
+        // Swap one value out per frame until the each value is 
+        // guaranteed to be swapped out at least once
         if(shuffleCount >= arr.length){
         
             shuffling = false;
@@ -135,7 +135,7 @@ void draw(){
         
     }else{
     
-        // Otherwise continue the algorithm
+        // If we're not shuffling, continue the algorithm
         algo.step();
     
     }
@@ -150,6 +150,7 @@ void draw(){
         rect(i * rect_pixel_width, map(arr[i], 0, arr.length, height, 0), rect_pixel_width, height);
         stroke(255);
     
+        // If it's not done and we're not shuffling, draw some extra stuff
         if(!algo.sorted && !shuffling){
             
             if(algo instanceof QuickSort){
@@ -203,13 +204,23 @@ void draw(){
 
     if(!shuffling){
         
+        // If we aren't shuffling, print stats
         nameText = algo.name + " (" + arr.length + " values)";
         timeText = getTimeString(millis());
         swapsText = "Swaps: " + algo.numSwaps;
         comparisonsText = "Comparisons: " + algo.numComps;
     
+    }else{
+    
+        // If we are shuffling, print just the shuffle text
+        nameText = shuffleText;
+        timeText = "";
+        comparisonsText = "";
+        swapsText = "";
+    
     }
     
+    // Draw on-screen text as necessary
     fill(255);
     
     text(nameText, 10, 20);
