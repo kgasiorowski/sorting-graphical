@@ -18,16 +18,22 @@ String swapsText = "";
 void setup(){
     
     size(1280, 720);
+    //fullScreen();
     
     rectMode(CORNER);
     background(0);
 
     algos = new ArrayList();
 
-    algos.add(new BubbleSort());
-    algos.add(new SelectionSort());
-    algos.add(new InsertionSort());
+    //algos.add(new BubbleSort());
+    //algos.add(new FastBubbleSort());
+    //algos.add(new SelectionSort());
+    //algos.add(new FastSelectionSort());
+    //algos.add(new InsertionSort());
+    //algos.add(new FastInsertionSort());
     algos.add(new QuickSort());
+    
+    //algos.add(new MergeSort());
 
     currentAlgorithm = 0;
 
@@ -51,6 +57,8 @@ void keyPressed(){
 // Call this function to re-initialize the currently running algorithm, with
 // the option to randomize the array
 void reset(boolean shuffle){
+    
+    println(algos.get(currentAlgorithm).arrSize);
     
     // Re-initialize the array
     arr = new int[algos.get(currentAlgorithm).arrSize];
@@ -78,6 +86,8 @@ void reset(boolean shuffle){
 
 boolean shuffling = true;
 int shuffleCount;
+boolean repeat = true;
+boolean drawText = false;
 void draw(){
     
     //Clear the background
@@ -95,9 +105,15 @@ void draw(){
         // Once we do the entire array, just exit
         if(++currentAlgorithm >= algos.size()){
         
-            //exit();
-            currentAlgorithm = 0;
-        
+            if(repeat)
+                currentAlgorithm = 0;
+            else{
+                //exit();
+                noLoop();
+                exit();
+                return;
+            }
+            
         }
         
         // New algorithm, so we have to re-initialize it and tell the program to start shuffling
@@ -119,7 +135,7 @@ void draw(){
         
         }else{
         
-            int swap = int(random(arr.length));
+            int swap = int(random(0, shuffleCount));
             
             if(swap != shuffleCount){
             
@@ -220,19 +236,25 @@ void draw(){
     
     }
     
-    // Draw on-screen text as necessary
-    fill(255);
+    if(drawText){
     
-    text(nameText, 10, 20);
-    if(!shuffling && algo.sorted)
-        fill(0,255,0);
+        // Draw on-screen text as necessary
+        fill(255);
         
-    text(timeText, 10, 40);
+        text(nameText, 10, 20);
+        if(!shuffling && algo.sorted)
+            fill(0,255,0);
+            
+        text(timeText, 10, 40);
+        
+        fill(255);
+        
+        text(swapsText, 10, 60);
+        text(comparisonsText, 10, 80);
+
+    }
     
-    fill(255);
-    
-    text(swapsText, 10, 60);
-    text(comparisonsText, 10, 80);
+    //saveFrame(videoPath + "gif--#####.png");
     
 }
 

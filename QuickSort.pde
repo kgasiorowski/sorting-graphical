@@ -12,7 +12,7 @@ class QuickSort extends SortingAlgorithm{
     
     QuickSort(){
     
-        arrSize = 300;
+        arrSize = 200;
         callStack = new Stack();
         starting = true;
         name = "Quick Sort";
